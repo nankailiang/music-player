@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nan的音乐播放器</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="shortcut icon" href="logo.ico">
+</head>
+
+<body>
+    <div id="box">
+        <div id="app">
+            <div class="header">
+                <span class="ntm"><a style="color: white;text-decoration: none;"
+                    target="_blank" href="https://music.163.com/">网易云音乐</a></span>
+                <div class="search">
+                    <input type="text" placeholder="请输入歌手或歌曲名字" class="text" v-model="keywords" @keyup.enter="getMusic">
+                </div>
+                <span class="tm" title="点击隐藏"><i>右上角展开</i>×</span>
+            </div>
+            <ul>
+                <li class="li" :title="a.name + '-' + a.artists[0].name" v-for="(a,index) in arr"
+                    @click="fun(a.id,a.name,a.artists[0].name)">{{a.name}}-{{a.artists[0].name}}</li>
+            </ul>
+            <div class="section">
+                <div class="nar">
+                    <span class="name">{{ name }}</span>
+                    <img class="img" :src="imgUrl" alt>
+                </div>
+                <div class="lyric">
+                    <span v-for="lrc in lyric">{{ lrc.toString().substring(10,)  }}<br></span>
+                </div>
+            </div>
+            <audio autoplay controls loop :src="url"></audio>
+        </div>
+        <span class="kai" title="展开">√</span>
+        <span class="github" title="右键关闭"><a style="color:#C20C0C;text-decoration: none;" target="_blank" href="https://github.com/nankailiang/music-player">GitHub地址</a></span>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/axios/0.19.2/axios.js"></script>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="index.js"></script>
+    <script>
+        $(function () {
+            $(".kai").hide();
+            $(".tm i").hide();
+            $(".tm").click(function () {
+                $("#app").slideUp(100);
+                $(".kai").fadeIn();
+            });
+            $(".tm").hover(function () {
+                $(".tm i").stop().slideDown();
+            }, function () {
+                $(".tm i").stop().slideUp();
+            })
+            $(".kai").click(function () {
+                $("#app").slideDown(100);
+                $(".kai").fadeOut();
+            });
+            var app = $("#app"),
+                header = $(".header");
+            var disX,
+                disY;
+            header.mousedown(function (e) {
+                disX = e.pageX - parseInt(app.offset().left);
+                disY = e.pageY - parseInt(app.offset().top);
+                document.onmousemove = function (e) {
+                    var event = e || window.event;
+                    app.css({ "left": e.pageX - disX + "px", "top": e.pageY - disY + "px" });
+                }
+                document.onmouseup = function () {
+                    document.onmousemove = null;
+                }
+
+            })
+            $(".github").mousedown(function (e) {
+                if (e.button == 2) {
+                    $(this).fadeOut();
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
